@@ -348,7 +348,7 @@ def get_xhs_stream_url(url: str, cookies: Union[str, None] = None) -> Dict[str, 
     appuid = re.search('appuid=(.*?)&', url).group(1)
     app_api = f'https://www.xiaohongshu.com/api/sns/red/live/app/v1/ecology/outside/share_info?room_id={room_id}'
     req = urllib.request.Request(app_api, headers=headers)
-    response = opener.open(req, timeout=15)
+    response = opener.open(req, timeout=25)
     json_str = response.read().decode('utf-8')
     json_data = json.loads(json_str)
     anchor_name = json_data['data']['host_info']['nickname']
