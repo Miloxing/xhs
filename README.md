@@ -43,6 +43,11 @@
 - [x] 流星直播
 - [x] ShowRoom
 - [x] Acfun
+- [x] 时光直播
+- [x] 映客直播
+- [x] 音播直播
+- [x] 知乎直播
+- [x] CHZZK
 - [ ] 更多平台正在更新中
 
 </div>
@@ -56,19 +61,23 @@
     ├── /logs -> (save runing log file)
     ├── /backup_config -> (backup file)
     ├── /libs -> (dll file)
+    ├── /douyinliverecorder -> (package)
+    	├── spider.py-> (get live data)
+    	├── stream.py-> (get live stream address)
+    	├── utils.py -> (contains utility functions)
+    	├── logger.py -> (logger handdle)
+    	├── room.py -> (get room info)
+    	├── /javascript -> (some decrypt code)
     ├── main.py -> (main file)
-    ├── spider.py-> (get live url)
-    ├── utils.py -> (contains utility functions)
-    ├── logger.py -> (logger handdle)
-    ├── web_rid.py -> (get web_rid)
+    ├── demo.py -> (call package test demo)
     ├── msg_push.py -> (send live status update message)
-    ├── cookies.py -> (get douyin cookies)
-    ├── x-bogus.js -> (get douyin xbogus token)
     ├── ffmpeg.exe -> (record video)
     ├── index.html -> (play m3u8 and flv video)
     ├── requirements.txt -> (library dependencies)
     ├── docker-compose.yaml -> (Container Orchestration File)
     ├── Dockerfile -> (Application Build Recipe)
+    ├── StopRecording.vbs -> (stop recording script on Windows)
+    ...
 ```
 
 </div>
@@ -82,13 +91,13 @@
 
 - 另外，如果需要录制TikTok、AfreecaTV等海外平台，请在配置文件中设置开启代理并添加proxy_addr链接 如：`127.0.0.1:7890` （这只是示例地址，具体根据实际填写）。
 
-- 假如`URL_config.ini`文件中添加的直播间地址，有个别直播间暂时不想录制又不想移除链接，可以在对应直播间的链接开头加上`#`，那么下次启动软件录制时将跳过该直播间。
+- 假如`URL_config.ini`文件中添加的直播间地址，有个别直播间暂时不想录制又不想移除链接，可以在对应直播间的链接开头加上`#`，那么将停止该直播间的监测以及录制。
 
 - 软件默认录制清晰度为 `原画` ，如果要单独设置某个直播间的录制画质，可以在添加直播间地址时前面加上画质即可，如`超清，https://live.douyin.com/745964462470` 记得中间要有`,` 分隔。
 
 - 如果要长时间挂着软件循环监测直播，最好循环时间设置长一点（咱也不差没录制到的那几分钟），避免因请求频繁导致被官方封禁IP 。
 
-- 要停止直播录制，使用 `Ctrl+C ` 或直接关闭程序即可。
+- 要停止直播录制，在录制界面使用 `Ctrl+C ` 组合键中断录制，若要停止其中某个直播间的录制，可在`URL_config.ini`文件中的地址前加#，会自动停止对应直播间的录制并正常保存视频。
 - 最后，欢迎右上角给本项目一个star，同时也非常乐意大家提交pr。
 
 &emsp;
@@ -99,6 +108,8 @@
 抖音：
 https://live.douyin.com/745964462470
 https://v.douyin.com/iQFeBnt/
+https://live.douyin.com/yall1102  （链接+抖音号）
+https://v.douyin.com/CeiU5cbX  （作者主页地址）
 
 TikTok：
 https://www.tiktok.com/@pearlgaga88/live
@@ -129,7 +140,8 @@ https://www.bigo.tv/cn/716418802
 buled直播：
 https://app.blued.cn/live?id=Mp6G2R
 
-AfreecaTV：
+SOOP[AfreecaTV]：
+https://play.sooplive.co.kr/sw7love
 https://play.afreecatv.com/sw7love
 
 网易cc：
@@ -164,7 +176,7 @@ https://twitcasting.tv/c:uonq
 https://live.baidu.com/m/media/pclive/pchome/live.html?room_id=9175031377&tab_category
 
 微博直播:
-https://weibo.com/u/7676267963
+https://weibo.com/u/7676267963 （主页地址）
 https://weibo.com/l/wblive/p/show/1022:2321325026370190442592
 
 酷狗直播:
@@ -177,19 +189,32 @@ LiveMe:
 https://www.liveme.com/zh/v/17141543493018047815/index.html
 
 花椒直播:
-https://www.huajiao.com/user/223184650
+https://www.huajiao.com/user/223184650  （主页地址）
 
 流星直播:
 https://www.7u66.com/100960
 
 ShowRoom:
-https://www.showroom-live.com/room/profile?room_id=480206
+https://www.showroom-live.com/room/profile?room_id=480206  （主页地址）
 
 Acfun:
 https://live.acfun.cn/live/179922
-```
 
-直播间分享地址和网页端长地址都能正常进行录制（抖音尽量用长链接，避免因短链接转换失效导致不能正常录制，而且需要有nodejs环境，否则无法转换）。
+时光直播：
+https://www.rengzu.com/180778
+
+映客直播：
+https://www.inke.cn/liveroom/index.html?uid=22954469&id=1720860391070904
+
+音播直播：
+https://live.ybw1666.com/800002949
+
+知乎直播:
+https://www.zhihu.com/theater/114453
+
+CHZZK：
+https://chzzk.naver.com/live/458f6ec20b034f49e0fc6d03921646d2
+```
 
 &emsp;
 
@@ -297,7 +322,7 @@ docker-compose stop
 
 ②在容器内时，如果手动中断容器运行停止录制，会导致正在录制的视频文件损坏！
 
-**如果想避免手动中断或者异常中断导致文件损坏的情况，请使用 `ts` 格式录制并且不要开启自动转成mp4设置**。
+**无论哪种运行方式，为避免手动中断或者异常中断导致录制的视频文件损坏的情况，推荐使用 `ts` 格式保存**。
 
 &emsp;
 
@@ -310,10 +335,37 @@ docker-compose stop
 [![missuo](https://github.com/missuo.png?size=50)](https://github.com/missuo)
 <a href="https://github.com/xueli12" target="_blank"><img src="https://github.com/xueli12.png?size=50" alt="xueli12" style="width:53px; height:51px;" /></a>
 <a href="https://github.com/kaine1973" target="_blank"><img src="https://github.com/kaine1973.png?size=50" alt="kaine1973" style="width:53px; height:51px;" /></a>
+<a href="https://github.com/yinruiqing" target="_blank"><img src="https://github.com/yinruiqing.png?size=50" alt="yinruiqing" style="width:53px; height:51px;" /></a>
+<a href="https://github.com/Max-Tortoise" target="_blank"><img src="https://github.com/Max-Tortoise.png?size=50" alt="Max-Tortoise" style="width:53px; height:51px;" /></a>
+[![justdoiting](https://github.com/justdoiting.png?size=50)](https://github.com/justdoiting)
+[![dhbxs](https://github.com/dhbxs.png?size=50)](https://github.com/dhbxs)
+[![wujiyu115](https://github.com/wujiyu115.png?size=50)](https://github.com/wujiyu115)
+[![zhanghao333](https://github.com/zhanghao333.png?size=50)](https://github.com/zhanghao333)
+<a href="https://github.com/gyc0123" target="_blank"><img src="https://github.com/gyc0123.png?size=50" alt="gyc0123" style="width:53px; height:51px;" /></a>
 &emsp;
 
 ## ⏳提交日志
 
+- 20241005
+  - 新增邮箱和Bark推送
+  - 新增直播注释停止录制
+  - 优化分段录制
+  - 重构部分代码
+  
+- 20240928
+  - 新增知乎直播、CHZZK直播录制
+  - 修复音播直播录制
+- 20240903
+  - 新增抖音双屏录制、音播直播录制
+  - 修复PandaTV、bigo直播录制
+- 20240713
+  - 新增映客直播录制
+- 20240705
+  - 新增时光直播录制
+- 20240701
+  - 修复虎牙直播录制2分钟断流问题
+
+  - 新增自定义直播推送内容
 - 20240621
   - 新增Acfun、ShowRoom直播录制
   - 修复微博录制、新增直播源线路
@@ -321,7 +373,6 @@ docker-compose stop
   - 修复酷狗直播录制
   - 修复TikTok部分无法解析直播源
   - 修复抖音无法录制连麦直播
-  
 - 20240510
   - 修复部分虎牙直播间录制错误
 - 20240508
@@ -388,9 +439,8 @@ docker-compose stop
   - 新增AfreecaTV直播录制，修复某些可能会发生的bug
 
 - 20231207
-
   - 新增blued直播录制，修复YY直播录制，新增直播结束消息推送
-
+  
 - 20231206
   - 新增bigo直播录制
 
