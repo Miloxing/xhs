@@ -12,6 +12,8 @@ import subprocess
 import sys
 import platform
 import zipfile
+from typing import Union
+from typing import Optional
 from pathlib import Path
 import requests
 from tqdm import tqdm
@@ -22,7 +24,8 @@ execute_dir = os.path.split(os.path.realpath(sys.argv[0]))[0]
 current_env_path = os.environ.get('PATH')
 
 
-def unzip_file(zip_path: str | Path, extract_to: str | Path, delete: bool = True) -> None:
+#def unzip_file(zip_path: str | Path, extract_to: str | Path, delete: bool = True) -> None:
+def unzip_file(zip_path: Union[str, Path], extract_to: Union[str, Path], delete: bool = True) -> None:
     if not os.path.exists(extract_to):
         os.makedirs(extract_to)
 
@@ -33,7 +36,8 @@ def unzip_file(zip_path: str | Path, extract_to: str | Path, delete: bool = True
         os.remove(zip_path)
 
 
-def get_lanzou_download_link(url: str, password: str | None = None) -> str | None:
+#def get_lanzou_download_link(url: str, password: str | None = None) -> str | None:
+def get_lanzou_download_link(url: str, password: Optional[str] = None) -> Optional[str]:
     try:
         headers = {
             'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',

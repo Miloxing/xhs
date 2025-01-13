@@ -35,6 +35,7 @@ from douyinliverecorder import utils
 from msg_push import (
     dingtalk, xizhi, tg_bot, send_email, bark, ntfy
 )
+from typing import Union, Optional
 
 version = "v4.0.2"
 platforms = ("\n国内站点：抖音|快手|虎牙|斗鱼|YY|B站|小红书|bigo|blued|网易CC|千度热播|猫耳FM|Look|TwitCasting|百度|微博|"
@@ -130,7 +131,7 @@ def display_info() -> None:
             logger.error(f"错误信息: {e} 发生错误的行数: {e.__traceback__.tb_lineno}")
 
 
-def update_file(file_path: str, old_str: str, new_str: str, start_str: str = None) -> str | None:
+def update_file(file_path: str, old_str: str, new_str: str, start_str: Optional[str] = None) -> Union[str, None]:
     if old_str == new_str and start_str is None:
         return old_str
     with file_update_lock:
@@ -362,7 +363,7 @@ def clear_record_info(record_name: str, record_url: str) -> None:
 
 
 def check_subprocess(record_name: str, record_url: str, ffmpeg_command: list, save_type: str,
-                     script_command: str | None = None) -> bool:
+                             script_command: Optional[str] = None) -> bool:
     save_file_path = ffmpeg_command[-1]
     process = subprocess.Popen(
         ffmpeg_command, stderr=subprocess.STDOUT, startupinfo=get_startup_info(os_type)
@@ -1722,7 +1723,7 @@ while True:
 
     try:
         url_comments, line_list, url_line_list = [[] for _ in range(3)]
-        with (open(url_config_file, "r", encoding=text_encoding, errors='ignore') as file):
+        with open(url_config_file, "r", encoding=text_encoding, errors='ignore') as file:
             for origin_line in file:
                 if origin_line in line_list:
                     delete_line(url_config_file, origin_line)

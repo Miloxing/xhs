@@ -2,6 +2,7 @@
 
 import os
 import shutil
+from typing import Union, Optional
 from pathlib import Path
 import functools
 import hashlib
@@ -45,7 +46,8 @@ def trace_error_decorator(func: callable) -> callable:
     return wrapper
 
 
-def check_md5(file_path: str | Path) -> str:
+#def check_md5(file_path: str | Path) -> str:
+def check_md5(file_path: Union[str, Path]) -> str:
     with open(file_path, 'rb') as fp:
         file_md5 = hashlib.md5(fp.read()).hexdigest()
     return file_md5
@@ -56,7 +58,8 @@ def dict_to_cookie_str(cookies_dict: dict) -> str:
     return cookie_str
 
 
-def read_config_value(file_path: str | Path, section: str, key: str) -> str | None:
+#def read_config_value(file_path: str | Path, section: str, key: str) -> str | None:
+def read_config_value(file_path: Union[str, Path], section: str, key: str) -> Optional[str]:
     config = configparser.ConfigParser()
 
     try:
@@ -76,7 +79,8 @@ def read_config_value(file_path: str | Path, section: str, key: str) -> str | No
     return None
 
 
-def update_config(file_path: str | Path, section: str, key: str, new_value: str) -> None:
+#def update_config(file_path: str | Path, section: str, key: str, new_value: str) -> None:
+def update_config(file_path: Union[str, Path], section: str, key: str, new_value: str) -> None:
     config = configparser.ConfigParser()
 
     try:
@@ -129,7 +133,8 @@ def remove_emojis(text: str, replace_text: str = '') -> str:
     return emoji_pattern.sub(replace_text, text)
 
 
-def remove_duplicate_lines(file_path: str | Path) -> None:
+#def remove_duplicate_lines(file_path: str | Path) -> None:
+def remove_duplicate_lines(file_path: Union[str, Path]) -> None:
     unique_lines = OrderedDict()
     text_encoding = 'utf-8-sig'
     with open(file_path, 'r', encoding=text_encoding) as input_file:
@@ -140,7 +145,8 @@ def remove_duplicate_lines(file_path: str | Path) -> None:
             output_file.write(line + '\n')
 
 
-def check_disk_capacity(file_path: str | Path, show: bool = False) -> float:
+#def check_disk_capacity(file_path: str | Path, show: bool = False) -> float:
+def check_disk_capacity(file_path: Union[str, Path], show: bool = False) -> float:
     absolute_path = os.path.abspath(file_path)
     directory = os.path.dirname(absolute_path)
     disk_usage = shutil.disk_usage(directory)
