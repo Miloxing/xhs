@@ -14,7 +14,6 @@ import execjs
 import requests
 import urllib.request
 from . import JS_SCRIPT_PATH
-from typing import Optional
 
 no_proxy_handler = urllib.request.ProxyHandler({})
 opener = urllib.request.build_opener(no_proxy_handler)
@@ -36,8 +35,7 @@ HEADERS_PC = {
 
 
 # X-bogus算法
-#def get_xbogus(url: str, headers: dict | None = None) -> str:
-def get_xbogus(url: str, headers: Optional[dict] = None) -> str:
+def get_xbogus(url: str, headers: dict | None = None) -> str:
     if not headers or 'user-agent' not in (k.lower() for k in headers):
         headers = HEADERS
     query = urllib.parse.urlparse(url).query
@@ -46,8 +44,7 @@ def get_xbogus(url: str, headers: Optional[dict] = None) -> str:
 
 
 # 获取房间ID和用户secID
-#def get_sec_user_id(url: str, proxy_addr: str | None = None, headers: dict | None = None) -> tuple | None:
-def get_sec_user_id(url: str, proxy_addr: Optional[str] = None, headers: Optional[dict] = None) -> Optional[tuple]:
+def get_sec_user_id(url: str, proxy_addr: str | None = None, headers: dict | None = None) -> tuple | None:
     if not headers or all(k.lower() not in ['user-agent', 'cookie'] for k in headers):
         headers = HEADERS
 
@@ -67,8 +64,7 @@ def get_sec_user_id(url: str, proxy_addr: Optional[str] = None, headers: Optiona
 
 
 # 获取抖音号
-#def get_unique_id(url: str, proxy_addr: str | None = None, headers: dict | None = None) -> str:
-def get_unique_id(url: str, proxy_addr: Optional[str] = None, headers: Optional[dict] = None) -> str:
+def get_unique_id(url: str, proxy_addr: str | None = None, headers: dict | None = None) -> str:
     if not headers or all(k.lower() not in ['user-agent', 'cookie'] for k in headers):
         headers = HEADERS_PC
 
@@ -88,8 +84,8 @@ def get_unique_id(url: str, proxy_addr: Optional[str] = None, headers: Optional[
 
 
 # 获取直播间webID
-def get_live_room_id(room_id: str, sec_user_id: str, proxy_addr: Optional[str] = None,
-                             params: Optional[dict] = None, headers: Optional[dict] = None) -> str:
+def get_live_room_id(room_id: str, sec_user_id: str, proxy_addr: str | None = None,
+                     params: dict | None = None, headers: dict | None = None) -> str:
     if not headers or all(k.lower() not in ['user-agent', 'cookie'] for k in headers):
         headers = HEADERS
 

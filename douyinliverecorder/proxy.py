@@ -3,7 +3,6 @@ import sys
 from enum import Enum, auto
 from dataclasses import dataclass, field
 from .utils import logger
-from typing import Tuple
 
 
 class ProxyType(Enum):
@@ -49,7 +48,7 @@ class ProxyDetector:
         else:
             return self._is_proxy_enabled_linux()
 
-    def _get_proxy_info_windows(self) -> Tuple[str, str]:
+    def _get_proxy_info_windows(self) -> tuple[str, str]:
         ip, port = "", ""
         if self._is_proxy_enabled_windows():
             try:
@@ -75,7 +74,7 @@ class ProxyDetector:
         return False
 
     @staticmethod
-    def _get_proxy_info_linux() -> Tuple[str, str]:
+    def _get_proxy_info_linux() -> tuple[str, str]:
         proxies = {
             'http': os.getenv('http_proxy'),
             'https': os.getenv('https_proxy'),
