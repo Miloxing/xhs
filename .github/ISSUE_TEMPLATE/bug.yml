@@ -1,13 +1,12 @@
 name: 🐛 Bug report
-description: 创建Bug报告以帮助项目改进。
-title: 🐛[BUG] 请输入标题
-labels: bug
+description: 项目运行中遇到的Bug或问题。
+labels: ["status: issue-bug"]
 body:
   - type: markdown
     attributes:
       value: |
-        📝 **请在上方的`title`中填写一个简洁明了的标题**，格式建议为：🐛[Bug] 简短描述。
-        例如：🐛[Bug] B站某些直播间无法录制。
+        📝 **请在上方的`title`中填写一个简洁明了的标题**，格式建议为：[Bug] 简短描述。
+        例如：[Bug] B站某些直播间无法录制。
   - type: checkboxes
     attributes:
       label: ⚠️ 确认是否已存在类似问题
@@ -24,7 +23,6 @@ body:
       options:
         - 直接运行的exe文件
         - 使用源代码运行
-        - 使用docker运行
     validations:
       required: true
   - type: dropdown
@@ -32,28 +30,14 @@ body:
       label: 🐍 如果是使用源代码运行，请选择你的Python环境版本
       description: 请选择你运行程序的Python版本。
       options:
+        - Python 3.8
+        - Python 3.9
         - Python 3.10
         - Python 3.11
         - Python 3.12
-        - Python 3.13
         - Other (请在问题中说明)
     validations:
       required: false
-  - type: dropdown
-    attributes:
-      label: 💻 请选择你的系统环境
-      description: 请选择你运行程序的具体系统版本。
-      options:
-        - Windows 10
-        - Windows 11
-        - macOS
-        - Ubuntu
-        - CentOS
-        - Fedora
-        - Debian
-        - Other (请在问题中说明)
-    validations:
-      required: true
   - type: checkboxes
     attributes:
       label: ⚠️ 确认是否已经重试多次

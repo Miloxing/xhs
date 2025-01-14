@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
-from douyinliverecorder.logger import logger
+from loguru import logger
 from douyinliverecorder import spider
 
 # 以下示例直播间链接不保证时效性，请自行查看链接是否能正常访问
-# Please note that the following example live room links may not be up-to-date;
 LIVE_STREAM_CONFIG = {
     "douyin": {
         "url": "https://live.douyin.com/745964462470",
@@ -15,11 +14,11 @@ LIVE_STREAM_CONFIG = {
     },
     "kuaishou": {
         "url": "https://live.kuaishou.com/u/yall1102",
-        "func": spider.get_kuaishou_stream_data,
+        "func": spider.get_kuaishou_stream_data2,
     },
     "huya": {
         "url": "https://www.huya.com/116",
-        "func": spider.get_huya_app_stream_url,
+        "func": spider.get_huya_stream_data,
     },
     "douyu": {
         "url": "https://www.douyu.com/topic/wzDBLS6?rid=4921614&dyshid=",
@@ -34,7 +33,7 @@ LIVE_STREAM_CONFIG = {
         "func": spider.get_bilibili_stream_data,
     },
     "xhs": {
-        "url": "https://www.xiaohongshu.com/user/profile/6330049c000000002303c7ed?appuid=5f3f478a00000000010005b3",
+        "url": "http://xhslink.com/O9f9fM",
         "func": spider.get_xhs_stream_url,
     },
     "bigo": {
@@ -45,9 +44,13 @@ LIVE_STREAM_CONFIG = {
         "url": "https://app.blued.cn/live?id=Mp6G2R",
         "func": spider.get_blued_stream_url,
     },
-    "sooplive": {
+    "afreecatv": {
+        "url": "https://play.afreecatv.com/sw7love",
+        "func": spider.get_afreecatv_stream_data,
+    },
+    "soop": {
         "url": "https://play.sooplive.co.kr/sw7love",
-        "func": spider.get_sooplive_stream_data,
+        "func": spider.get_afreecatv_stream_data,
     },
     "netease": {
         "url": "https://cc.163.com/583946984",
@@ -106,8 +109,12 @@ LIVE_STREAM_CONFIG = {
         "func": spider.get_liveme_stream_url,
     },
     "huajiao": {
-        "url": "https://www.huajiao.com/user/207446325",
+        "url": "https://www.huajiao.com/user/223184650",
         "func": spider.get_huajiao_stream_url,
+    },
+    "liuxing": {
+        "url": "https://www.7u66.com/100960",
+        "func": spider.get_liuxing_stream_url,
     },
     "showroom": {
         "url": "https://www.showroom-live.com/room/profile?room_id=511033",
@@ -126,11 +133,11 @@ LIVE_STREAM_CONFIG = {
         "func": spider.get_yingke_stream_url,
     },
     "yinbo": {
-        "url": "https://live.ybw1666.com/800008687",
+        "url": "https://live.ybw1666.com/800002949",
         "func": spider.get_yinbo_stream_url,
     },
     "zhihu": {
-        "url": "https://www.zhihu.com/people/ac3a467005c5d20381a82230101308e9",
+        "url": "https://www.zhihu.com/theater/114453",
         "func": spider.get_zhihu_stream_url,
     },
     "chzzk": {
@@ -161,39 +168,15 @@ LIVE_STREAM_CONFIG = {
     "6room": {
         "url": "https://v.6.cn/634435",
         "func": spider.get_6room_stream_url,
-    },
-    "lehai": {
-        "url": "https://www.lehaitv.com/8059096",
-        "func": spider.get_haixiu_stream_url,
-    },
-    "huamao": {
-        "url": "https://h.catshow168.com/live/preview.html?uid=19066357&anchorUid=18895331",
-        "func": spider.get_pplive_stream_url,
-    },
-    "shopee": {
-        "url": "https://sg.shp.ee/GmpXeuf?uid=1006401066&session=802458",
-        "func": spider.get_shopee_stream_url,
-    },
-    "youtube": {
-        "url": "https://www.youtube.com/watch?v=cS6zS5hi1w0",
-        "func": spider.get_youtube_stream_url,
-    },
-    "taobao": {
-        "url": "https://m.tb.cn/h.TWp0HTd",
-        "func": spider.get_taobao_stream_url,
-    },
-    "jd": {
-        "url": "https://3.cn/28MLBy-E",
-        "func": spider.get_jd_stream_url,
     }
 }
 
 
-def test_live_stream(platform_name: str, proxy_addr=None, cookies=None) -> None:
+def test_live_stream(platform_name: str, proxy_addr=None) -> None:
     if platform_name in LIVE_STREAM_CONFIG:
         config = LIVE_STREAM_CONFIG[platform_name]
         try:
-            stream_data = config['func'](config['url'], proxy_addr=proxy_addr, cookies=cookies)
+            stream_data = config['func'](config['url'], proxy_addr=proxy_addr)
             logger.debug(f"Stream data for {platform_name}: {stream_data}")
         except Exception as e:
             logger.error(f"Error fetching stream data for {platform_name}: {e}")

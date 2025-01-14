@@ -1,18 +1,17 @@
 name: 🚀 Feature request
 description: 提出你对项目的新想法或建议。
-title: 🚀[Feature] 请输入标题
-labels: enhancement
+labels: ["status: issue-feature"]
 body:
   - type: markdown
     attributes:
       value: |
-        📝 **请在上方的`title`中填写一个简洁明了的标题**，格式建议为：🚀[Feature] 简短描述。
-        例如：🚀[Feature] 添加xx直播录制。
+        📝 **请在上方的`title`中填写一个简洁明了的标题**，格式建议为：[Feature] 简短描述。
+        例如：[Feature] 添加xx直播录制。
   - type: checkboxes
     attributes:
       label: ⚠️ 搜索是否存在类似issue
       description: >
-        🔍 [点击这里搜索历史issue](https://github.com/ihmily/DouyinLiveRecorder/issues?q=is%3Aissue) 使用关键词搜索，确保没有重复的issue。
+        🔍 请在 [历史issue](https://github.com/ihmily/DouyinLiveRecorder/issues) 中清空输入框，使用关键词搜索，确保没有重复的issue。
       options:
         - label: 我已经搜索过issues，没有发现相似issue
           required: true
@@ -36,3 +35,8 @@ body:
       description: 描述你提出该feature的动机，以及没有这项feature对你的使用造成了怎样的影响。
       placeholder: |
         我需要这个功能是因为...
+
+  - type: textarea
+    attributes:
+      label: 📚 附加信息
+      description: 如果有其他相关信息，如屏幕截图、错误日志或相关文档，请在这里提供。

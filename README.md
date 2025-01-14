@@ -24,7 +24,7 @@
 - [x] 小红书
 - [x] bigo 
 - [x] blued
-- [x] SOOP(原AfreecaTV)
+- [x] AfreecaTV
 - [x] 网易cc
 - [x] 千度热播
 - [x] PandaTV
@@ -43,21 +43,11 @@
 - [x] 流星直播
 - [x] ShowRoom
 - [x] Acfun
+- [x] 时光直播
 - [x] 映客直播
 - [x] 音播直播
 - [x] 知乎直播
 - [x] CHZZK
-- [x] 嗨秀直播
-- [x] vv星球直播
-- [x] 17Live
-- [x] 浪Live
-- [x] 畅聊直播
-- [x] 飘飘直播
-- [x] 六间房直播
-- [x] 乐嗨直播
-- [x] 花猫直播
-- [x] Shopee
-- [x] Youtube
 - [ ] 更多平台正在更新中
 
 </div>
@@ -70,8 +60,8 @@
     ├── /config -> (config record)
     ├── /logs -> (save runing log file)
     ├── /backup_config -> (backup file)
+    ├── /libs -> (dll file)
     ├── /douyinliverecorder -> (package)
-        ├── initializer.py-> (check and install nodejs)
     	├── spider.py-> (get live data)
     	├── stream.py-> (get live stream address)
     	├── utils.py -> (contains utility functions)
@@ -79,7 +69,6 @@
     	├── room.py -> (get room info)
     	├── /javascript -> (some decrypt code)
     ├── main.py -> (main file)
-    ├── ffmpeg_install.py -> (ffmpeg install script)
     ├── demo.py -> (call package test demo)
     ├── msg_push.py -> (send live status update message)
     ├── ffmpeg.exe -> (record video)
@@ -108,7 +97,7 @@
 
 - 如果要长时间挂着软件循环监测直播，最好循环时间设置长一点（咱也不差没录制到的那几分钟），避免因请求频繁导致被官方封禁IP 。
 
-- 要停止直播录制，Windows平台可执行StopRecording.vbs脚本文件，或者在录制界面使用 `Ctrl+C ` 组合键中断录制，若要停止其中某个直播间的录制，可在`URL_config.ini`文件中的地址前加#，会自动停止对应直播间的录制并正常保存已录制的视频。
+- 要停止直播录制，在录制界面使用 `Ctrl+C ` 组合键中断录制，若要停止其中某个直播间的录制，可在`URL_config.ini`文件中的地址前加#，会自动停止对应直播间的录制并正常保存视频。
 - 最后，欢迎右上角给本项目一个star，同时也非常乐意大家提交pr。
 
 &emsp;
@@ -120,7 +109,7 @@
 https://live.douyin.com/745964462470
 https://v.douyin.com/iQFeBnt/
 https://live.douyin.com/yall1102  （链接+抖音号）
-https://v.douyin.com/CeiU5cbX  （主播主页地址）
+https://v.douyin.com/CeiU5cbX  （作者主页地址）
 
 TikTok：
 https://www.tiktok.com/@pearlgaga88/live
@@ -141,9 +130,9 @@ https://www.yy.com/22490906/22490906
 B站：
 https://live.bilibili.com/320
 
-小红书（推荐使用主页地址)：
-https://www.xiaohongshu.com/user/profile/6330049c000000002303c7ed?appuid=5f3f478a00000000010005b3
+小红书：
 http://xhslink.com/xpJpfM
+https://www.xiaohongshu.com/hina/livestream/569077534207413574/1707413727088?appuid=5f3f478a00000000010005b3&
 
 bigo直播：
 https://www.bigo.tv/cn/716418802
@@ -151,8 +140,9 @@ https://www.bigo.tv/cn/716418802
 buled直播：
 https://app.blued.cn/live?id=Mp6G2R
 
-SOOP：
+SOOP[AfreecaTV]：
 https://play.sooplive.co.kr/sw7love
+https://play.afreecatv.com/sw7love
 
 网易cc：
 https://cc.163.com/583946984
@@ -186,6 +176,7 @@ https://twitcasting.tv/c:uonq
 https://live.baidu.com/m/media/pclive/pchome/live.html?room_id=9175031377&tab_category
 
 微博直播:
+https://weibo.com/u/7676267963 （主页地址）
 https://weibo.com/l/wblive/p/show/1022:2321325026370190442592
 
 酷狗直播:
@@ -198,16 +189,19 @@ LiveMe:
 https://www.liveme.com/zh/v/17141543493018047815/index.html
 
 花椒直播:
-https://www.huajiao.com/l/345096174
+https://www.huajiao.com/user/223184650  （主页地址）
 
 流星直播:
 https://www.7u66.com/100960
 
 ShowRoom:
-https://www.showroom-live.com/room/profile?room_id=480206  （主播主页地址）
+https://www.showroom-live.com/room/profile?room_id=480206  （主页地址）
 
 Acfun:
 https://live.acfun.cn/live/179922
+
+时光直播：
+https://www.rengzu.com/180778
 
 映客直播：
 https://www.inke.cn/liveroom/index.html?uid=22954469&id=1720860391070904
@@ -216,49 +210,20 @@ https://www.inke.cn/liveroom/index.html?uid=22954469&id=1720860391070904
 https://live.ybw1666.com/800002949
 
 知乎直播:
-https://www.zhihu.com/people/ac3a467005c5d20381a82230101308e9 (主播主页地址)
+https://www.zhihu.com/theater/114453
 
-CHZZK:
+CHZZK：
 https://chzzk.naver.com/live/458f6ec20b034f49e0fc6d03921646d2
-
-嗨秀直播:
-https://www.haixiutv.com/6095106
-
-VV星球直播:
-https://h5webcdn-pro.vvxqiu.com//activity/videoShare/videoShare.html?h5Server=https://h5p.vvxqiu.com&roomId=LP115924473&platformId=vvstar
-
-17Live:
-https://17.live/en/live/6302408
-
-浪Live:
-https://www.lang.live/en-US/room/3349463
-
-畅聊直播:
-https://www.tlclw.com/801044397
-
-飘飘直播:
-https://m.pp.weimipopo.com/live/preview.html?uid=91648673&anchorUid=91625862&app=plpl
-
-六间房直播:
-https://v.6.cn/634435
-
-乐嗨直播:
-https://www.lehaitv.com/8059096
-
-花猫直播:
-https://h.catshow168.com/live/preview.html?uid=19066357&anchorUid=18895331
-
-Shopee:
-https://sg.shp.ee/GmpXeuf?uid=1006401066&session=802458
-
-Youtube:
-https://www.youtube.com/watch?v=cS6zS5hi1w0
 ```
 
 &emsp;
 
+在线播放m3u8和flv视频网站：[M3U8 在线视频播放器 ](https://jx.hmily.vip/play/)
+
+&emsp;
+
 ## 🎃源码运行
-使用源码运行，前提要有**Python>=3.10**环境，如果没有请先自行安装Python，再执行下面步骤。
+使用源码运行，前提要有Python环境，如果没有请先安装Python，再执行下面步骤。
 
 1.首先拉取或手动下载本仓库项目代码
 
@@ -328,7 +293,7 @@ docker-compose up
 
 2.构建镜像(可选)
 
-如果你只想简单的运行程序，则不需要做这一步。Docker镜像仓库中代码版本可能不是最新的，如果要运行本仓库主分支最新代码，可以本地自定义构建，通过修改 [docker-compose.yaml](https://github.com/ihmily/DouyinLiveRecorder/blob/main/docker-compose.yaml) 文件，如将镜像名修改为 `douyin-live-recorder:latest`，并取消 `# build: .` 注释，然后再执行
+如果你只想简单的运行程序，则不需要做这一步。要自定义本地构建，可以修改 [docker-compose.yaml](https://github.com/ihmily/DouyinLiveRecorder/blob/main/docker-compose.yaml) 文件，如将镜像名修改为 `douyin-live-recorder:latest`，并取消 `# build: .` 注释，然后再执行
 
 ```bash
 docker build -t douyin-live-recorder:latest .
@@ -377,31 +342,16 @@ docker-compose stop
 [![wujiyu115](https://github.com/wujiyu115.png?size=50)](https://github.com/wujiyu115)
 [![zhanghao333](https://github.com/zhanghao333.png?size=50)](https://github.com/zhanghao333)
 <a href="https://github.com/gyc0123" target="_blank"><img src="https://github.com/gyc0123.png?size=50" alt="gyc0123" style="width:53px; height:51px;" /></a>
-
-&ensp;&ensp; [![HoratioShaw](https://github.com/HoratioShaw.png?size=50)](https://github.com/HoratioShaw)
-[![nov30th](https://github.com/nov30th.png?size=50)](https://github.com/nov30th)
 &emsp;
 
 ## ⏳提交日志
 
-- 20241130
-  - 新增shopee、youtube直播录制
-  - 新增支持自定义m3u8、flv地址录制
-  - 新增自定义执行脚本，支持python、bat、bash等
-  - 修复YY直播、花椒直播和小红书直播录制
-  - 修复b站标题获取错误
-  - 修复log日志错误
-- 20241030
-  - 新增嗨秀直播、vv星球直播、17Live、浪Live、SOOP、畅聊直播(原时光直播)、飘飘直播、六间房直播、乐嗨直播、花猫直播等10个平台直播录制
-  - 修复小红书直播录制，支持小红书作者主页地址录制直播
-  - 新增支持ntfy消息推送，以及新增支持批量推送多个地址（逗号分隔多个推送地址)
-  - 修复Liveme直播录制、twitch直播录制
-  - 新增Windows平台一键停止录制VB脚本程序
 - 20241005
   - 新增邮箱和Bark推送
   - 新增直播注释停止录制
   - 优化分段录制
   - 重构部分代码
+  
 - 20240928
   - 新增知乎直播、CHZZK直播录制
   - 修复音播直播录制
@@ -414,6 +364,7 @@ docker-compose stop
   - 新增时光直播录制
 - 20240701
   - 修复虎牙直播录制2分钟断流问题
+
   - 新增自定义直播推送内容
 - 20240621
   - 新增Acfun、ShowRoom直播录制
@@ -426,10 +377,13 @@ docker-compose stop
   - 修复部分虎牙直播间录制错误
 - 20240508
   - 修复花椒直播录制
+
   - 更改文件路径解析方式 [@kaine1973](https://github.com/kaine1973)
 - 20240506
   - 修复抖音录制画质解析bug
+
   - 修复虎牙录制 60帧最高画质问题
+
   - 新增流星直播录制
 - 20240427
   - 新增LiveMe、花椒直播录制
@@ -439,10 +393,13 @@ docker-compose stop
   - 新增酷狗直播录制、优化PopkonTV直播录制
 - 20240423
   - 新增百度直播录制、微博直播录制
+
   - 修复斗鱼录制直播回放的问题
+
   - 新增直播源地址显示以及输出到日志文件设置
 - 20240311
   - 修复海外平台录制bug，增加画质选择，增强录制稳定性
+
   - 修复虎牙录制bug (虎牙`一起看`频道 有特殊限制，有时无法录制)
 - 20240309
   - 修复虎牙直播、小红书直播和B站直播录制
@@ -456,29 +413,37 @@ docker-compose stop
   - 修复了小红书直播因官方更新直播域名，导致无法录制直播的问题
   - 修复了更新URL配置文件的bug
   - 最后，祝大家新年快乐！
-
-<details><summary>点击展开更多提交日志</summary>
-
 - 20240129
   - 新增猫耳FM直播录制
 - 20240127
   - 新增千度热播直播录制、新增pandaTV(韩国)直播录制
+
   - 新增telegram直播状态消息推送，修复了某些bug
+
   - 新增自定义设置不同直播间的录制画质(即每个直播间录制画质可不同)
+
   - 修改录制视频保存路径为 `downloads` 文件夹，并且分平台进行保存。
 - 20240114
   - 新增网易cc直播录制，优化ffmpeg参数，修改AfreecaTV输入直播地址格式
+
   - 修改日志记录器 @[iridescentGray](https://github.com/iridescentGray)
 - 20240102
   - 修复Linux上运行，新增docker配置文件
 - 20231210
+
   - 修复录制分段bug，修复bigo录制检测bug
+
   - 新增自定义修改录制主播名
+
+
   - 新增AfreecaTV直播录制，修复某些可能会发生的bug
+
 - 20231207
   - 新增blued直播录制，修复YY直播录制，新增直播结束消息推送
+  
 - 20231206
   - 新增bigo直播录制
+
 - 20231203
   - 新增小红书直播录制（全网首发），目前小红书官方没有切换清晰度功能，因此直播录制也只有默认画质
   - 小红书录制暂时无法循环监测，每次主播开启直播，都要重新获取一次链接
@@ -488,14 +453,18 @@ docker-compose stop
   - 欢迎各位大佬提pr 帮忙更新维护
 - 20230930
   - 新增抖音从接口获取直播流，增强稳定性
+
   - 修改快手获取直播流的方式，改用从官方接口获取
+
   - 祝大家中秋节快乐！
 - 20230919
   - 修复了快手版本更新后录制出错的问题，增加了其自动获取cookie(~~稳定性未知~~)
   - 修复了TikTok显示正在直播但不进行录制的问题
 - 20230907
   - 修复了因抖音官方更新了版本导致的录制出错以及短链接转换出错
+
   - 修复B站无法录制原画视频的bug
+
   - 修改了配置文件字段，新增各平台自定义设置Cookie
 - 20230903
   - 修复了TikTok录制时报644无法录制的问题
@@ -512,9 +481,11 @@ docker-compose stop
   - 修复主播重新开播无法再次录制的问题
 - 20230807
   - 新增了斗鱼直播录制
+
   - 修复显示录制完成之后会重新开始录制的问题
 - 20230805
   - 新增了虎牙直播录制，其暂时只能用flv视频流进行录制
+
   - Web API 新增了快手和虎牙这两个平台的直播流解析（TikTok要代理）
 - 20230804
   - 新增了快手直播录制，优化了部分代码
@@ -524,8 +495,10 @@ docker-compose stop
   - 新增了国际版抖音TikTok的直播录制，去除冗余 简化了部分代码
 - 20230724	
   - 新增了一个通过抖音直播间地址获取直播视频流链接的API接口，上传即可用
-  </details>
-  &emsp;
 
-## 有问题可以提issue, 我会在这里持续添加更多直播平台的录制 欢迎Star
+
+&emsp;
+
+## 有问题可以提issue ，后续我会在这里不断更新其他直播平台的录制  欢迎Star
+
 #### 
