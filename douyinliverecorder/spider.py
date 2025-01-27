@@ -705,7 +705,7 @@ def get_bilibili_stream_data(url: str, qn: str = '10000', platform: str = 'web',
 
 
 @trace_error_decorator
-def get_xhs_stream_url(url: str, proxy_addr: Union[str, None] = None, cookies: Union[str, None] = None) -> \
+def get_xhs_stream_url(url: str, proxy_addr: Union[str, None] = None, cookies: Union[str, None] = None, anchor_name: Union[str, None] = None) -> \
         Dict[str, Any]:
     headers = {
         'User-Agent': 'ios/7.830 (ios 17.0; ; iPhone 15 (A2846/A3089/A3090/A3092))',
@@ -725,13 +725,16 @@ def get_xhs_stream_url(url: str, proxy_addr: Union[str, None] = None, cookies: U
     room_id = re.search('/livestream/(.*?)(?=/|\\?|$)', url)
     if room_id:
         room_id = room_id.group(1)
-        api = f'https://www.xiaohongshu.com/api/sns/red/live/app/v1/ecology/outside/share_info?room_id={room_id}'
-        # api = f'https://www.redelight.cn/api/sns/red/live/app/v1/ecology/outside/share_info?room_id={room_id}'
-        json_str = get_req(api, proxy_addr=proxy_addr, headers=headers)
-        json_data = json.loads(json_str)
-        anchor_name = json_data['data']['host_info']['nickname']
-        live_status = json_data['data']['room']['status']
-        result["anchor_name"] = anchor_name
+        if not anchor_name:
+            api = f'https://www.xiaohongshu.com/api/sns/red/live/app/v1/ecology/outside/share_info?room_id={room_id}'
+            # api = f'https://www.redelight.cn/api/sns/red/live/app/v1/ecology/outside/share_info?room_id={room_id}'
+            json_str = get_req(api, proxy_addr=proxy_addr, headers=headers)
+            json_data = json.loads(json_str)
+            anchor_name = json_data['data']['host_info']['nickname']
+            live_status = json_data['data']['room']['status']
+            result["anchor_name"] = anchor_name
+        else:
+            live_status = 0
 
         # 这个判断不准确，无论是否在直播status都为0
         if live_status == 0:
