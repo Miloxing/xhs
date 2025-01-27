@@ -461,7 +461,7 @@ def start_record(url_data: tuple, count_variable: int = -1):
                         platform = '小红书直播'
                         with semaphore:
                             port_info = spider.get_xhs_stream_url(
-                                record_url, proxy_addr=proxy_address, cookies=xhs_cookie)
+                                record_url, proxy_addr=proxy_address, cookies=xhs_cookie, anchor_name=anchor_name)
                             retry += 1
 
                     elif record_url.find("https://www.bigo.tv/") > -1 or record_url.find("slink.bigovideo.tv/") > -1:
