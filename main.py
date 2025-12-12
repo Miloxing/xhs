@@ -521,6 +521,7 @@ def get_record_headers(platform, live_url):
         '千度热播': 'referer:https://qiandurebo.com',
         '17Live': 'referer:https://17.live/en/live/6302408',
         '浪Live': 'referer:https://www.lang.live',
+        '微博直播': f'referer:{live_domain}',
         'shopee': f'origin:{live_domain}',
         'Blued直播': 'referer:https://app.blued.cn'
     }

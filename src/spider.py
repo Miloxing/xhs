@@ -26,7 +26,7 @@ import execjs
 import urllib.request
 from . import JS_SCRIPT_PATH, utils
 from .utils import trace_error_decorator, generate_random_string
-from .logger import script_path
+from .logger import script_path, logger
 from .room import get_sec_user_id, get_unique_id, UnsupportedUrlError
 from .http_clients.async_http import async_req
 from .ab_sign import ab_sign
@@ -2005,49 +2005,102 @@ async def get_baidu_stream_data(url: str, proxy_addr: OptionalStr = None, cookie
 
 @trace_error_decorator
 async def get_weibo_stream_data(url: str, proxy_addr: OptionalStr = None, cookies: OptionalStr = None) -> dict:
-    headers = {
-        'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
-        'Cookie': 'XSRF-TOKEN=qAP-pIY5V4tO6blNOhA4IIOD; SUB=_2AkMRNMCwf8NxqwFRmfwWymPrbI9-zgzEieKnaDFrJRMxHRl-yT9kqmkhtRB6OrTuX5z9N_7qk9C3xxEmNR-8WLcyo2PM; SUBP=0033WrSXqPxfM72-Ws9jqgMF55529P9D9WWemwcqkukCduUO11o9sBqA; WBPSESS=Wk6CxkYDejV3DDBcnx2LOXN9V1LjdSTNQPMbBDWe4lO2HbPmXG_coMffJ30T-Avn_ccQWtEYFcq9fab1p5RR6PEI6w661JcW7-56BszujMlaiAhLX-9vT4Zjboy1yf2l',
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:124.0) Gecko/20100101 Firefox/124.0',
-        'Referer': 'https://weibo.com/u/5885340893'
-    }
-    if cookies:
-        headers['Cookie'] = cookies
+    result = {"anchor_name": "", "is_live": False}
+    try:
+        base_url = url.split('?', maxsplit=1)[0]
+        default_cookie = (
+            'XSRF-TOKEN=qAP-pIY5V4tO6blNOhA4IIOD; '
+            'SUB=_2AkMRNMCwf8NxqwFRmfwWymPrbI9-zgzEieKnaDFrJRMxHRl-yT9kqmkhtRB6OrTuX5z9N_7qk9C3xxEmNR-8WLcyo2PM; '
+            'SUBP=0033WrSXqPxfM72-Ws9jqgMF55529P9D9WWemwcqkukCduUO11o9sBqA; '
+            'WBPSESS=Wk6CxkYDejV3DDBcnx2LOXN9V1LjdSTNQPMbBDWe4lO2HbPmXG_coMffJ30T-Avn_ccQWtEYFcq9fab1p5RR6PEI6w661JcW7-56BszujMlaiAhLX-9vT4Zjboy1yf2l'
+        )
+        cookie_str = cookies or default_cookie
+        headers = {
+            'Accept': 'application/json, text/plain, */*',
+            'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
+                          'Chrome/129.0.0.0 Safari/537.36',
+            'Referer': base_url if base_url.startswith('https://weibo.com') else 'https://weibo.com/',
+            'X-Requested-With': 'XMLHttpRequest',
+            'Cookie': cookie_str
+        }
+        xsrf_match = re.search(r'XSRF-TOKEN=([^;]+)', cookie_str)
+        if xsrf_match:
+            headers['X-XSRF-TOKEN'] = xsrf_match.group(1)
 
-    room_id = ''
-    if 'show/' in url:
-        room_id = url.split('?')[0].split('show/')[1]
-    else:
-        uid = url.split('?')[0].rsplit('/u/', maxsplit=1)[1]
-        web_api = f'https://weibo.com/ajax/statuses/mymblog?uid={uid}&page=1&feature=0'
-        json_str = await async_req(web_api, proxy_addr=proxy_addr, headers=headers)
-        json_data = json.loads(json_str)
-        for i in json_data['data']['list']:
-            if 'page_info' in i and i['page_info']['object_type'] == 'live':
-                room_id = i['page_info']['object_id']
-                break
+        room_id = ''
+        if 'show/' in base_url:
+            room_id = base_url.rsplit('show/', maxsplit=1)[-1]
+        else:
+            uid = base_url.rsplit('/u/', maxsplit=1)[-1]
+            web_api = f'https://weibo.com/ajax/statuses/mymblog?uid={uid}&page=1&feature=0'
+            json_str = await async_req(web_api, proxy_addr=proxy_addr, headers=headers)
+            try:
+                json_data = json.loads(json_str)
+            except json.JSONDecodeError:
+                logger.error(f"Weibo API returned invalid JSON for uid={uid} (len={len(json_str)}).")
+                return result
 
-    result = {"anchor_name": '', "is_live": False}
-    if room_id:
+            items = json_data.get('data', {}).get('list', [])
+            if items and isinstance(items[0], dict):
+                result["anchor_name"] = items[0].get('user', {}).get('screen_name', '') or ''
+
+            for item in items:
+                if not isinstance(item, dict):
+                    continue
+                page_info = item.get('page_info')
+                if isinstance(page_info, dict) and page_info.get('object_type') == 'live':
+                    room_id = page_info.get('object_id') or ''
+                    break
+
+        if not room_id:
+            return result
+
         app_api = f'https://weibo.com/l/pc/anchor/live?live_id={room_id}'
-        # app_api = f'https://weibo.com/l/!/2/wblive/room/show_pc_live.json?live_id={room_id}'
         json_str = await async_req(url=app_api, proxy_addr=proxy_addr, headers=headers)
-        json_data = json.loads(json_str)
-        anchor_name = json_data['data']['user_info']['name']
-        result["anchor_name"] = anchor_name
-        live_status = json_data['data']['item']['status']
-        if live_status == 1:
-            result["is_live"] = True
-            live_title = json_data['data']['item']['desc']
-            play_url_list = json_data['data']['item']['stream_info']['pull']
-            m3u8_url = play_url_list['live_origin_hls_url']
-            flv_url = play_url_list['live_origin_flv_url']
-            result['title'] = live_title
-            result['play_url_list'] = [
-                {"m3u8_url": m3u8_url, "flv_url": flv_url},
-                {"m3u8_url": m3u8_url.split('_')[0] + '.m3u8', "flv_url": flv_url.split('_')[0] + '.flv'}
-            ]
-    return result
+        try:
+            json_data = json.loads(json_str)
+        except json.JSONDecodeError:
+            logger.error(f"Weibo live API returned invalid JSON for live_id={room_id} (len={len(json_str)}).")
+            return result
+
+        data = json_data.get('data') if isinstance(json_data, dict) else None
+        if not isinstance(data, dict):
+            return result
+
+        user_info = data.get('user_info')
+        if isinstance(user_info, dict):
+            result["anchor_name"] = user_info.get('name') or result["anchor_name"]
+
+        item = data.get('item')
+        if not isinstance(item, dict):
+            return result
+
+        live_status = item.get('status')
+        if live_status != 1:
+            return result
+
+        stream_info = item.get('stream_info', {})
+        pull = stream_info.get('pull') if isinstance(stream_info, dict) else None
+        if not isinstance(pull, dict):
+            return result
+
+        m3u8_url = pull.get('live_origin_hls_url')
+        flv_url = pull.get('live_origin_flv_url')
+        if not m3u8_url:
+            return result
+
+        result["is_live"] = True
+        result['title'] = item.get('desc')
+        play_list = [{"m3u8_url": m3u8_url, "flv_url": flv_url}]
+        if '_' in m3u8_url:
+            play_list.append({"m3u8_url": m3u8_url.split('_')[0] + '.m3u8', "flv_url": (flv_url.split('_')[0] + '.flv') if flv_url and '_' in flv_url else flv_url})
+        result['play_url_list'] = play_list
+        return result
+
+    except Exception as e:
+        logger.error(f"Failed to fetch Weibo live info: {type(e).__name__}: {e}")
+        return result
 
 
 @trace_error_decorator
