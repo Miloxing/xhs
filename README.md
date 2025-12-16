@@ -675,5 +675,36 @@ docker-compose stop
   </details>
   &emsp;
 
+## rclone 自动上传录制文件
+
+项目根目录新增 `rclone_upload.py`，可用于自动扫描 `downloads/` 并上传到 rclone 远端（也可作为“录制完成后自定义脚本”使用）。
+
+### 1) 后台循环上传（推荐）
+
+```bash
+# 仅演示：请把 remote:xxx 改成你自己的 rclone 目标
+export RCLONE_UPLOAD_DEST='remote:backup/xhs'
+python3 rclone_upload.py --watch
+```
+
+常用参数示例：
+
+```bash
+# 只上传 mp4，避免和 ts->mp4 转码互相影响
+python3 rclone_upload.py --watch --dest 'remote:backup/xhs' --include-ext mp4 --mode copy
+
+# 需要上传后删除本地：用 --mode move（建议仍只传 mp4）
+python3 rclone_upload.py --watch --dest 'remote:backup/xhs' --include-ext mp4 --mode move
+```
+
+### 2) 录制完成后自动上传（hook）
+
+在 `config/config.ini` 中设置：
+
+- `是否录制完成后执行自定义脚本 = 是`
+- `自定义脚本执行命令 = python3 /绝对路径/rclone_upload.py --dest remote:backup/xhs --include-ext mp4 --mode copy`
+
+程序会自动追加 `--save_file_path/--save_type/--converts_to_mp4` 等参数，脚本会按实际生成的文件上传。
+
 ## 有问题可以提issue, 我会在这里持续添加更多直播平台的录制 欢迎Star
 #### 
