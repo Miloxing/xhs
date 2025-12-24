@@ -26,7 +26,7 @@ import execjs
 import urllib.request
 from . import JS_SCRIPT_PATH, utils
 from .utils import trace_error_decorator, generate_random_string
-from .logger import script_path
+from .logger import script_path, logger
 from .room import get_sec_user_id, get_unique_id, UnsupportedUrlError
 from .http_clients.async_http import async_req
 from .ab_sign import ab_sign
@@ -2005,6 +2005,26 @@ async def get_baidu_stream_data(url: str, proxy_addr: OptionalStr = None, cookie
 
 @trace_error_decorator
 async def get_weibo_stream_data(url: str, proxy_addr: OptionalStr = None, cookies: OptionalStr = None) -> dict:
+    def parse_weibo_json(raw_text: str, api_name: str) -> dict | None:
+        if not raw_text:
+            logger.warning(f"微博接口返回空内容({api_name})，可能cookie失效或被风控")
+            return None
+        cleaned = raw_text.strip()
+        for prefix in ("for (;;);", ")]}',"):
+            if cleaned.startswith(prefix):
+                cleaned = cleaned[len(prefix):].lstrip()
+                break
+        if cleaned and cleaned[0] not in "{[":
+            start = cleaned.find("{")
+            end = cleaned.rfind("}")
+            if start != -1 and end > start:
+                cleaned = cleaned[start:end + 1]
+        try:
+            return json.loads(cleaned)
+        except json.JSONDecodeError:
+            logger.warning(f"微博接口返回非JSON({api_name})，可能cookie失效或被风控")
+            return None
+
     base_url = url.split('?', maxsplit=1)[0]
     default_cookie = (
         'XSRF-TOKEN=qAP-pIY5V4tO6blNOhA4IIOD; '
@@ -2030,10 +2050,12 @@ async def get_weibo_stream_data(url: str, proxy_addr: OptionalStr = None, cookie
         uid = url.split('?')[0].rsplit('/u/', maxsplit=1)[1]
         web_api = f'https://weibo.com/ajax/statuses/mymblog?uid={uid}&page=1&feature=0'
         json_str = await async_req(web_api, proxy_addr=proxy_addr, headers=headers)
-        json_data = json.loads(json_str)
-        for i in json_data['data']['list']:
-            if 'page_info' in i and i['page_info']['object_type'] == 'live':
-                room_id = i['page_info']['object_id']
+        json_data = parse_weibo_json(json_str, "mymblog")
+        if not json_data:
+            return {"anchor_name": '', "is_live": False}
+        for i in json_data.get('data', {}).get('list', []):
+            if i.get('page_info', {}).get('object_type') == 'live':
+                room_id = i.get('page_info', {}).get('object_id', '')
                 break
 
     result = {"anchor_name": '', "is_live": False}
@@ -2041,21 +2063,24 @@ async def get_weibo_stream_data(url: str, proxy_addr: OptionalStr = None, cookie
         app_api = f'https://weibo.com/l/pc/anchor/live?live_id={room_id}'
         # app_api = f'https://weibo.com/l/!/2/wblive/room/show_pc_live.json?live_id={room_id}'
         json_str = await async_req(url=app_api, proxy_addr=proxy_addr, headers=headers)
-        json_data = json.loads(json_str)
-        anchor_name = json_data['data']['user_info']['name']
+        json_data = parse_weibo_json(json_str, "live")
+        if not json_data:
+            return result
+        anchor_name = json_data.get('data', {}).get('user_info', {}).get('name', '')
         result["anchor_name"] = anchor_name
-        live_status = json_data['data']['item']['status']
+        live_status = json_data.get('data', {}).get('item', {}).get('status')
         if live_status == 1:
             result["is_live"] = True
-            live_title = json_data['data']['item']['desc']
-            play_url_list = json_data['data']['item']['stream_info']['pull']
-            m3u8_url = play_url_list['live_origin_hls_url']
-            flv_url = play_url_list['live_origin_flv_url']
+            live_title = json_data.get('data', {}).get('item', {}).get('desc', '')
+            play_url_list = json_data.get('data', {}).get('item', {}).get('stream_info', {}).get('pull', {})
+            m3u8_url = play_url_list.get('live_origin_hls_url', '')
+            flv_url = play_url_list.get('live_origin_flv_url', '')
             result['title'] = live_title
-            result['play_url_list'] = [
-                {"m3u8_url": m3u8_url, "flv_url": flv_url},
-                {"m3u8_url": m3u8_url.split('_')[0] + '.m3u8', "flv_url": flv_url.split('_')[0] + '.flv'}
-            ]
+            if m3u8_url and flv_url:
+                result['play_url_list'] = [
+                    {"m3u8_url": m3u8_url, "flv_url": flv_url},
+                    {"m3u8_url": m3u8_url.split('_')[0] + '.m3u8', "flv_url": flv_url.split('_')[0] + '.flv'}
+                ]
     return result
 
 
